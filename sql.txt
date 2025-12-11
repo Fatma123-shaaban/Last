@@ -1,0 +1,186 @@
+  create table Musican
+                      (MID number(6) not NULL,S_title varchar2(150),Name varchar2(50),City varchar2(100),Street varchar2(100),Phone number(11),
+                       constraint MID_PK primary key (MID));
+   
+   
+  create table Song 
+                  (S_title varchar2(200) not NULL,Author varchar2(150),MID number(6),
+                   constraint S_title_pk primary key(S_title));
+                   
+ create table Album 
+                   (AlbumID number(6) not NULL,MID number(6),CopyRighDate DATE,Title varchar2(150),
+                    constraint AlbumID_pk primary key (AlbumID));
+                    
+                    
+  create table Instrument
+                        (instrument_name varchar2(150),Musical_key varchar2(100),MID number(6),
+                        constraint instrument_name_pk primary key (instrument_name));
+
+
+
+ create table Musician_Instrument
+                                (MID number(6),instrument_name  varchar2(150),
+                                 constraint MI_PK primary key (MID, instrument_name));
+
+
+alter table Musican
+  add constraint S_title_fk
+  foreign key (S_title)
+  references Song(S_title);
+
+
+alter table Song
+  add constraint MID_FK
+  foreign key (MID)
+  references Musican(MID);
+  
+alter table Album
+  add constraint MIDAlbum_FK
+  foreign key (MID)
+  references Musican(MID);
+  
+alter table Album
+  add S_title varchar2(200)
+  
+
+alter table Album
+  add constraint S_titleAlbum_FK
+  foreign key (S_title)
+  references Song(S_title);
+  
+alter table Instrument
+  add constraint MIDInstrument_FK
+  foreign key (MID)
+  references Musican(MID);
+  
+alter table Musician_Instrument
+  add constraint MI_MID_FK
+  foreign key (MID)
+  references Musican(MID);
+  
+alter table Musician_Instrument
+  add constraint MI_INSTR_FK foreign key (instrument_name)
+  references Instrument(instrument_name);
+  
+
+
+insert into Song (S_title, Author, MID)
+values ('Song A', 'Fatma Shaaban', 1);
+
+insert into Song (S_title, Author, MID)
+values ('Song B', 'Sara Ahmed', 2);
+
+insert into Song (S_title, Author, MID)
+values ('Song C', 'Heba Khaled', 3);
+
+
+
+insert into Musican (MID, Name, City, Street, Phone)
+values (1,  'Fatma Shaaban', 'Tala', '1 A', 20123456789);
+
+insert into Musican (MID, Name, City, Street, Phone)
+values (2, 'Sara Ahmed', 'Alexandria', 'Tahrir Street', 20198765432);
+
+insert into Musican (MID, Name, City, Street, Phone)
+values (3, 'Heba Khaled', 'Giza', 'Pyramids Road', 20111223344);
+
+update Musican set S_title = 'Song A'
+where MID = 1;
+
+update Musican set S_title = 'Song B'
+where MID = 2;
+
+update Musican
+set S_title = 'Song C'
+where MID = 3;
+
+select * from song;
+
+select * from musican;
+
+
+
+insert into Album(AlbumID,MID,CopyRighDate,Title)
+values (101,1,TO_DATE('2025-01-01','YYYY-MM-DD'),'First Album');
+
+insert into Album(AlbumID,MID,CopyRighDate,Title)
+values (102,2,TO_DATE('2025-03-15','YYYY-MM-DD'),'Second Album');
+
+insert into Album(AlbumID,MID,CopyRighDate,Title)
+values (103,3,TO_DATE('2025-06-10','YYYY-MM-DD'),'Third Album');
+
+
+insert into Instrument(instrument_name,Musical_key,MID)
+values ('Piano','C',1);
+
+insert into Instrument(instrument_name,Musical_key,MID)
+values ('Guitar','E',2);
+
+insert into Instrument(instrument_name,Musical_key,MID)
+values ('Drums','B-flat',3);
+
+select * from Instrument;
+select * from Album;
+
+
+
+insert into Musician_Instrument(MID,instrument_name)
+values (1,'Piano');
+
+insert into Musician_Instrument(MID,instrument_name)
+values (2,'Guitar');
+
+insert into Musician_Instrument(MID,instrument_name)
+values (3,'Drums');
+
+insert into Musician_Instrument(MID,instrument_name)
+values (1,'Guitar');
+
+select * from Musician_Instrument;
+
+
+
+
+
+create or replace view v_song_musical as
+select m.Name as Musician_Name, s.S_title as Song_Title, s.Author as Song_Author
+from Musican m
+inner join Song s
+on m.MID = s.MID;
+
+
+create or replace view v_left_song_musical as
+select m.Name as Musician_Name, s.S_title as Song_Title, s.Author as Song_Author
+from Musican m
+left join Song s
+on m.MID = s.MID;
+
+
+create or replace view v_right_song_musical as
+select m.Name as Musician_Name, s.S_title as Song_Title, s.Author as Song_Author
+from Musican m
+right join Song s
+on m.MID = s.MID;
+
+create or replace view v_full_song_musical as
+select m.Name as Musician_Name, s.S_title as Song_Title, s.Author as Song_Author
+from Musican m
+full outer join Song s
+on m.MID = s.MID;
+
+create or replace view v_cross_song_musical as
+select m.Name as Musician_Name, i.instrument_name as Instrument_Name
+from Musican m
+cross join Instrument i;
+
+
+select * from v_song_musical;
+
+select * from v_left_song_musical;
+
+select * from v_right_song_musical;
+
+select * from v_full_song_musical;
+
+select * from v_cross_song_musical;
+
